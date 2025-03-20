@@ -102,19 +102,8 @@ SNS_TOPIC_ARN=arn:aws:sns:us-west-2:314146318953:EnergyAlerts
 ---
 
 ## **Deployment (Optional)**
-The AWS infrastructure is **already deployed**, but you can redeploy using **AWS SAM or Terraform**.
+The AWS infrastructure is **already deployed**, but you can redeploy using **Terraform**.
 
-### **Deploy Using AWS SAM**
-1. **Install AWS SAM CLI**
-   ```sh
-   brew install aws-sam-cli  # macOS
-   choco install aws-sam-cli # Windows
-   ```
-2. **Build and Deploy**
-   ```sh
-   sam build
-   sam deploy --guided
-   ```
 
 ### **Deploy Using Terraform**
 1. **Initialize Terraform**
