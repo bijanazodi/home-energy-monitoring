@@ -1,203 +1,130 @@
-# Home Energy Monitoring App
+# **Home Energy Monitoring App**
 
-## Overview
-This project is a cloud-based home energy monitoring application that allows users to:
-- Manually input daily energy usage.
-- Upload CSV files for bulk energy tracking.
-- View historical energy consumption trends.
-- Receive alerts when energy usage exceeds predefined thresholds.
+## **Overview**
+This is a cloud-based Home Energy Monitoring application that allows users to:
+1. **Manually input energy usage data.**
+2. **Upload energy consumption files (CSV).**
+3. **View historical energy consumption trends.**
+4. **Receive alerts when usage exceeds predefined thresholds.**
+5. **Authenticate users via AWS Cognito.**
 
-This application is built using **AWS Lambda, API Gateway, DynamoDB, S3, Cognito, and SNS**.
-
-## Architecture
-The system is designed using serverless architecture on AWS:
-- **Amazon API Gateway**: Exposes RESTful API endpoints.
-- **AWS Lambda**: Handles business logic for authentication, data storage, and alerts.
-- **Amazon DynamoDB**: Stores energy usage data and user thresholds.
-- **Amazon S3**: Stores uploaded CSV files for batch processing.
-- **Amazon SNS**: Sends alerts when energy consumption exceeds thresholds.
-- **Amazon Cognito**: Manages user authentication and access control.
-
-## API Endpoints
-| **Method** | **Endpoint**               | **Description** |
-|------------|----------------------------|-----------------|
-| **POST**   | `/auth/signup`              | Register a new user |
-| **POST**   | `/auth/login`               | User login |
-| **POST**   | `/energy/input`             | Manually input energy usage |
-| **POST**   | `/energy/upload`            | Upload a CSV file containing energy usage |
-| **GET**    | `/energy/history`           | View historical energy usage for a date range |
-| **POST**   | `/alerts`                   | Set usage threshold and receive alerts |
+This project demonstrates AWS-based cloud architecture, including **serverless computing, storage, authentication, and monitoring.**
 
 ---
 
-## Deployment Instructions
+## **Architecture**
+The system is **fully serverless** and built on AWS using:
+- **Amazon API Gateway** → REST API exposure.
+- **AWS Lambda** → Serverless compute for backend logic.
+- **Amazon DynamoDB** → NoSQL database for energy data.
+- **Amazon S3** → Storage for CSV file uploads.
+- **Amazon Cognito** → User authentication.
+- **Amazon SNS** → Alert notifications.
+- **Amazon CloudWatch** → Logging and monitoring.
 
-### Prerequisites
-- An **AWS account** with permissions to create Lambda functions, DynamoDB tables, API Gateway, S3 buckets, and SNS topics.
+<p align="center">
+  <img src="architecture-diagram.png" alt="Architecture Diagram" width="700"/>
+</p>
+
+---
+
+## **API Endpoints**
+### **User Authentication**
+| Method | Endpoint | Description |
+|--------|---------|-------------|
+| `POST` | `/auth/signup` | Register a new user |
+| `POST` | `/auth/login` | Log in an existing user |
+
+### **Energy Data Management**
+| Method | Endpoint | Description |
+|--------|---------|-------------|
+| `POST` | `/energy/input` | Manually input daily energy usage |
+| `POST` | `/energy/upload` | Upload energy data via CSV |
+| `GET`  | `/energy/history?startDate=YYYY-MM-DD&endDate=YYYY-MM-DD` | Retrieve historical energy usage |
+
+### **Alerts and Notifications**
+| Method | Endpoint | Description |
+|--------|---------|-------------|
+| `POST` | `/alerts` | Set up an energy usage threshold and trigger alerts |
+
+---
+
+## **How to Run the Project Locally**
+Although the backend is **already deployed in AWS**, you can **test API requests** using Postman.
+
+### **Prerequisites**
 - **AWS CLI** installed and configured.
 - **Postman** for API testing.
-- **Python 3.12** installed.
+- **Python 3.12+** if running the Lambda functions locally.
 
-### Step 1: Clone the Repository
+### **1. Clone the Repository**
 ```sh
-git clone https://github.com/YOUR_GITHUB_USERNAME/home-energy-monitoring.git
+git clone https://github.com/bijanazodi/home-energy-monitoring.git
 cd home-energy-monitoring
 ```
 
-### Step 2: Deploy AWS Infrastructure
-1. **Create DynamoDB Table**
-   ```sh
-   aws dynamodb create-table --table-name EnergyUsage \
-   --attribute-definitions AttributeName=userId,AttributeType=S \
-   --key-schema AttributeName=userId,KeyType=HASH \
-   --billing-mode PAY_PER_REQUEST
-   ```
+### **2. Set Up Environment Variables**
+Create a `.env` file and add:
+```
+AWS_REGION=us-west-2
+USER_POOL_ID=us-west-2_RzWzglt2w
+APP_CLIENT_ID=1fu9qsuns3uuvkl13eapbn14ug
+COGNITO_CLIENT_SECRET=1lnouq2b4nr3og89ifv24idhrjkqc7h1p3rl98f92356ovdmubto
+DYNAMODB_TABLE=EnergyUsage
+S3_BUCKET=home-energy-csv
+SNS_TOPIC_ARN=arn:aws:sns:us-west-2:314146318953:EnergyAlerts
+```
 
-2. **Create S3 Bucket for File Uploads**
-   ```sh
-   aws s3api create-bucket --bucket home-energy-csv --region us-west-2
-   ```
-
-3. **Create an SNS Topic for Alerts**
-   ```sh
-   aws sns create-topic --name EnergyAlerts
-   ```
-
-### Step 3: Deploy Lambda Functions
-1. **Package and Deploy Lambda Functions**
-   ```sh
-   zip user_auth_lambda.zip user_auth_lambda.py
-   aws lambda update-function-code --function-name UserAuthLambda --zip-file fileb://user_auth_lambda.zip
-   ```
-
-   Repeat for all Lambda functions:
-   ```sh
-   zip process_csv_upload.zip process_csv_upload.py
-   aws lambda update-function-code --function-name ProcessCSVUpload --zip-file fileb://process_csv_upload.zip
-   ```
-
-### Step 4: Configure API Gateway
-1. **Create a new API in API Gateway**
-2. **Define the routes** (`/auth/signup`, `/energy/input`, etc.)
-3. **Link API routes to the respective Lambda functions**
-4. **Deploy the API and note down the base URL**
+### **3. Test API Endpoints in Postman**
+- **Sign up a new user**
+  - `POST /auth/signup`
+  - Body:
+    ```json
+    {
+      "email": "test@example.com",
+      "password": "SecurePass123!"
+    }
+    ```
+- **Log in to receive authentication tokens**
+  - `POST /auth/login`
+  - Response contains `id_token`, `access_token`, and `refresh_token`.
+- **Manually input energy usage**
+  - `POST /energy/input`
+  - Body:
+    ```json
+    {
+      "userId": "test123",
+      "date": "2024-06-10",
+      "usage": 42.5
+    }
+    ```
 
 ---
 
-## Testing the APIs in Postman
-### 1. Sign Up a User
-**Endpoint:** `POST /auth/signup`  
-**Request Body:**
-```json
-{
-    "email": "test@example.com",
-    "password": "SecurePass123!"
-}
-```
-**Response:**
-```json
-{
-    "message": "User signed up successfully",
-    "userId": "123e4567-e89b-12d3-a456-426614174000"
-}
-```
+## **Deployment (Optional)**
+The AWS infrastructure is **already deployed**, but you can redeploy using **AWS SAM or Terraform**.
 
-### 2. Log In a User
-**Endpoint:** `POST /auth/login`  
-**Request Body:**
-```json
-{
-    "email": "test@example.com",
-    "password": "SecurePass123!"
-}
-```
-**Response:**
-```json
-{
-    "message": "Login successful",
-    "id_token": "eyJraWQiOiJ...",
-    "access_token": "eyJraWQiOiJ..."
-}
-```
-
-### 3. Manually Input Energy Data
-**Endpoint:** `POST /energy/input`  
-**Request Body:**
-```json
-{
-    "userId": "testuser123",
-    "date": "2024-06-10",
-    "usage": 25.5
-}
-```
-**Response:**
-```json
-{
-    "message": "Energy data saved successfully"
-}
-```
-
-### 4. Upload a CSV File
-1. **Upload a CSV file to S3**
-   - Ensure the file format:
+### **Deploy Using AWS SAM**
+1. **Install AWS SAM CLI**
+   ```sh
+   brew install aws-sam-cli  # macOS
+   choco install aws-sam-cli # Windows
    ```
-   Date,Usage (kWh)
-   2024-06-01,25.0
-   2024-06-02,26.3
-   ```
-   - Upload the file using the API.
-
-2. **Trigger CSV Processing Lambda**
-   **Endpoint:** `POST /energy/upload`
-   **Request Body:**
-   ```json
-   {
-       "file_key": "test_upload.csv"
-   }
-   ```
-   **Response:**
-   ```json
-   {
-       "message": "CSV data processed successfully"
-   }
+2. **Build and Deploy**
+   ```sh
+   sam build
+   sam deploy --guided
    ```
 
-### 5. Retrieve Historical Data
-**Endpoint:** `GET /energy/history?startDate=2024-06-01&endDate=2024-06-10`  
-**Response:**
-```json
-[
-    {"date": "2024-06-01", "usage": 25.0},
-    {"date": "2024-06-02", "usage": 26.3}
-]
-```
+### **Deploy Using Terraform**
+1. **Initialize Terraform**
+   ```sh
+   terraform init
+   ```
+2. **Apply the Configuration**
+   ```sh
+   terraform apply -auto-approve
+   ```
 
-### 6. Set a Usage Threshold and Receive Alerts
-**Endpoint:** `POST /alerts`  
-**Request Body:**
-```json
-{
-    "threshold": 30
-}
-```
-**Response:**
-```json
-{
-    "message": "Alerts sent successfully",
-    "alerts": [
-        "High energy usage detected for User test123 on 2024-06-10: 42.5 kWh."
-    ]
-}
-```
-
----
-
-## Security Considerations
-- **AWS Cognito** is used for secure authentication.
-- **API Gateway** requires authentication headers.
-- **DynamoDB** access is controlled via IAM policies.
-- **S3 bucket** is private, with permissions limited to the Lambda role.
-
----
 
 
