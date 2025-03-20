@@ -86,18 +86,12 @@
             "header": [
               {
                 "key": "Content-Type",
-                "value": "multipart/form-data"
+                "value": "application/json"
               }
             ],
             "body": {
-              "mode": "formdata",
-              "formdata": [
-                {
-                  "key": "file",
-                  "type": "file",
-                  "src": "C:\Users\bijan\Desktop\test-upload.csv"
-                }
-              ]
+              "mode": "raw",
+              "raw": "{\n  \"bucket_name\": \"home-energy-csv\",\n  \"file_key\": \"test-upload.csv\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/energy/upload",
@@ -113,17 +107,17 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/energy/history?startDate=2025-03-01&endDate=2025-06-10",
+              "raw": "{{base_url}}/energy/history?startDate=2025-03-10&endDate=2025-03-20",
               "host": ["{{base_url}}"],
               "path": ["energy", "history"],
               "query": [
                 {
                   "key": "startDate",
-                  "value": "2024-06-01"
+                  "value": "2025-03-10"
                 },
                 {
                   "key": "endDate",
-                  "value": "2024-06-10"
+                  "value": "2025-03-20"
                 }
               ]
             }
