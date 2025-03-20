@@ -1,0 +1,170 @@
+{
+  "info": {
+    "_postman_id": "12345678-abcd-efgh-ijkl-87654321mnop",
+    "name": "Home Energy Monitoring API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "User Authentication",
+      "item": [
+        {
+          "name": "Signup",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"testuser@example.com\",\n  \"password\": \"SecurePass123!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/signup",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "signup"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"testuser@example.com\",\n  \"password\": \"SecurePass123!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Energy Data",
+      "item": [
+        {
+          "name": "Input Energy Usage",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"test123\",\n  \"date\": \"2025-03-20\",\n  \"usage\": 25.5\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/energy/input",
+              "host": ["{{base_url}}"],
+              "path": ["energy", "input"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Upload Energy CSV",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "multipart/form-data"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "C:\Users\bijan\Desktop\test-upload.csv"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/energy/upload",
+              "host": ["{{base_url}}"],
+              "path": ["energy", "upload"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Energy History",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/energy/history?startDate=2025-03-01&endDate=2025-06-10",
+              "host": ["{{base_url}}"],
+              "path": ["energy", "history"],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "2024-06-01"
+                },
+                {
+                  "key": "endDate",
+                  "value": "2024-06-10"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Alerts",
+      "item": [
+        {
+          "name": "Set Alert Threshold",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"threshold\": 30\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/alerts",
+              "host": ["{{base_url}}"],
+              "path": ["alerts"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://x5hqctw2u5.execute-api.us-west-2.amazonaws.com/dev",
+      "type": "string"
+    }
+  ]
+}
